@@ -16,8 +16,10 @@ FSJS project 2 - List Filter and Pagination
    will only be used inside of a function, then it can be locally 
    scoped to that function.
 ***/
-
-
+const students = document.getElementsByClassName("student-item");
+const page = document.getElementsByClassName("page")[0];
+const pages = Math.ceil(students.length / 10);
+var currentPage = 1;
 
 
 /*** 
@@ -34,16 +36,49 @@ FSJS project 2 - List Filter and Pagination
        that will be passed into the parens later when you call or 
        "invoke" the function 
 ***/
-
-
+function showPage(page){
+   console.log(page);
+   for( let i = 0; i < students.length; i++){
+      if(i>= (page - 1) * 10 && i<page*10){
+         students[i].style.display = "block";
+      }
+      else{
+         students[i].style.display = "none";
+      }
+   }
+}
 
 
 /*** 
    Create the `appendPageLinks function` to generate, append, and add 
    functionality to the pagination buttons.
 ***/
+function appendPageLinks(pages){
+   let links = document.createElement("ul","id=1");
+   links.className = "pagination";
+   for(let i = 1 ; i <= 6; i++ ){
+      let li = document.createElement('li');
+      let a = document.createElement('a')
+      a.innerText = i;
+      a.id = i;
+      if(i == currentPage){
+         a.className = "active";
+      }
+      a.onclick = (e) => handleClick(e);
+      li.append(a);
+      links.append(li);
+   }
+   page.appendChild(links);
+}
 
-
+function handleClick(event){
+   showPage(event.target.id);
+   event.target.className = "active";
+   document.getElementById(currentPage).classList.remove("active");
+   currentPage = event.target.id;
+}
+showPage(currentPage);
+appendPageLinks(pages);
 
 
 
