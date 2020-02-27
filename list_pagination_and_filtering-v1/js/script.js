@@ -2,9 +2,9 @@
 Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
- 
+
 //get the page container in order to add content
-const page = document.getElementsByClassName("page")[0]; 
+const page = document.getElementsByClassName("page")[0];
 
 //get the header section to add the search box and button
 const header = document.getElementsByClassName("page-header")[0];
@@ -12,7 +12,7 @@ const header = document.getElementsByClassName("page-header")[0];
 //get a list of all students and store it in a variable
 const students = document.getElementsByClassName("student-item");
 //array to store matched search results
-var searchResults =[];
+var searchResults = [];
 
 //track which page is currently displayed
 var currentPage = 1;
@@ -32,35 +32,36 @@ const reset = () => {
   }
   searchResults = [];
   //if there is an error message from a previous search remove it
-  if (page.getElementsByClassName("error")[0]) page.getElementsByClassName("error")[0].remove();
+  if (page.getElementsByClassName("error")[0])
+    page.getElementsByClassName("error")[0].remove();
 
   //if there was a pagination on the page remove it
-  if (document.getElementsByClassName("pagination")[0]) document.getElementsByClassName("pagination")[0].remove();
-}
+  if (document.getElementsByClassName("pagination")[0])
+    document.getElementsByClassName("pagination")[0].remove();
+};
 
-
-//Function that takes page number and list of students and displays the 
+//Function that takes page number and list of students and displays the
 //items that correspond to the page number
 const showPage = (page, students) => {
   // loop through the list of students and display the students that are within
   // the current page range and hide the rest
-  
+
   for (let i = 0; i < students.length; i++) {
-    if (i >= (page - 1) * 10 && i < page * 10){
+    if (i >= (page - 1) * 10 && i < page * 10) {
       students[i].style.display = "block";
     } else {
       students[i].style.display = "none";
     }
   }
-}
+};
 
 //function to add the pagination at the bottom of the page
 const appendPageLinks = () => {
   //determine count based on view mode(search/list)
-  const count = isSearch?searchResults.length:students.length;
-  //determine the number of pages assuming we only display 10 results per page  
-  let pages = Math.ceil(count/ 10);
-  //create a unordered list to contain the page links and give it a class name 
+  const count = isSearch ? searchResults.length : students.length;
+  //determine the number of pages assuming we only display 10 results per page
+  let pages = Math.ceil(count / 10);
+  //create a unordered list to contain the page links and give it a class name
   //pagination to style it
   let links = document.createElement("ul");
   links.className = "pagination";
@@ -71,10 +72,10 @@ const appendPageLinks = () => {
     a.innerText = i; //anchor tag text will show page number
     a.id = i; //id will also get the page number
     //if we are in search mode make sure that we are starting from page 1
-    if(isSearch){
-        if( i === 1){
-            a.className = "active";
-        }
+    if (isSearch) {
+      if (i === 1) {
+        a.className = "active";
+      }
     }
     //if we are not searching set the active link to show where we were previously
     else if (i == currentPage) {
@@ -91,16 +92,16 @@ const appendPageLinks = () => {
   }
   //finally add the link to the bottom of the page
   page.appendChild(links);
-}
+};
 
 //function to add a search box and button at the top of the page
 const addSearchBox = () => {
   let input = document.createElement("input"); //create input element
-  input.type = "text";//set type of input
+  input.type = "text"; //set type of input
   input.placeholder = "Search for students..."; //set the place holder
   input.onkeyup = event => search(event.target.value); //add event listener when the user types
   let button = document.createElement("button"); //create a button
-  button.innerText = "Search";//set text of button
+  button.innerText = "Search"; //set text of button
   //add event listener to search when user clicks
   button.onclick = event => search(event.target.previousElementSibling.value);
 
@@ -108,33 +109,37 @@ const addSearchBox = () => {
   let div = document.createElement("div");
   div.className = "student-search";
 
-    
   div.appendChild(input);
   div.appendChild(button);
 
   //finally add the search box to the header section(top of page)
   header.appendChild(div);
-}
+};
 
 //function that searches the list of students and show results
 //that match the search text passed in as an argument
 const search = searchText => {
-  
-  reset(); 
+  reset();
   if (searchText != "") {
     isSearch = true; //if the text box is not empty it is in search mode
-    //loop through students to find matches to search text and add it to array of matched students
-    for (const student of students) {
-      if (student.getElementsByTagName("h3")[0].innerText.toLowerCase().includes(searchText.toLowerCase())) 
-      {
-        searchResults.push(student);
+    if (searchText != " ") {
+      //loop through students to find matches to search text and add it to array of matched students
+      for (const student of students) {
+        if (
+          student
+            .getElementsByTagName("h3")[0]
+            .innerText.toLowerCase()
+            .includes(searchText.toLowerCase())
+        ) {
+          searchResults.push(student);
+        }
       }
     }
     //if there are matches display them
     if (searchResults.length != 0) {
       showPage(1, searchResults);
       appendPageLinks();
-    } 
+    }
     //otherwise display a no results message
     else {
       let error = document.createElement("div");
@@ -142,7 +147,7 @@ const search = searchText => {
       error.innerText = "No results";
       page.appendChild(error);
     }
-  } 
+  }
   //if search box is empty it is not in search mode so display the page the user was on
   //before search was started
   else {
@@ -151,28 +156,31 @@ const search = searchText => {
     appendPageLinks();
   }
   //additional feature to show number of matches at the top
-  document.getElementsByClassName("page-header")[0]
-  .getElementsByTagName("h2")[0].innerText = isSearch?`Search Results (${searchResults.length} matches)`: "STUDENTS";
-}
+  document
+    .getElementsByClassName("page-header")[0]
+    .getElementsByTagName("h2")[0].innerText = isSearch
+    ? `Search Results (${searchResults.length} matches)`
+    : "STUDENTS";
+};
 
 //event handler that fires if the user types in the search box or
 //presses the search button
-const handleNavigate= event => {
-  showPage(event.target.id, isSearch?searchResults:students);
+const handleNavigate = event => {
+  showPage(event.target.id, isSearch ? searchResults : students);
   //if there was a previouisly active page link display it as inactive
-  if (document.getElementsByClassName('active')[0])
-    document.getElementsByClassName('active')[0].classList.remove('active'); 
+  if (document.getElementsByClassName("active")[0])
+    document.getElementsByClassName("active")[0].classList.remove("active");
   event.target.className = "active"; //make the page link pressed appear active
-  //if we are not in search mode remember which page we are on  
-  if(!isSearch) currentPage = event.target.id;
-}
+  //if we are not in search mode remember which page we are on
+  if (!isSearch) currentPage = event.target.id;
+};
 
-for(const student of students){
+for (const student of students) {
   student.hide = false;
 }
 
 //Show initial page
-showPage(1,students);
+showPage(1, students);
 
 //add initial pagination
 appendPageLinks();
